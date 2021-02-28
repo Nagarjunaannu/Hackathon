@@ -1,0 +1,21 @@
+import { Selector, ClientFunction } from 'testcafe';
+import assert from 'assert';
+
+fixture `Dropzone`
+    .page('http://www.dropzonejs.com/');
+
+test('Set files to upload', async t => {
+    const hiddenInput = Selector('.dz-hidden-input', { visibilityCheck: false });
+    const changeVisibility = ClientFunction(visible => {
+        getInput().style.visibility = visible ? '' : 'hidden';
+        getInput().style.width = visible ? '1px' : '0px';
+        getInput().style.height = visible ? '1px' : '0px';
+    }, { dependencies: { getInput: hiddenInput }});
+
+    await t.hover('#dropzone');
+    await changeVisibility(true);
+    await t.setFilesToUpload(Selector('.dz-hidden-input', { visibilityCheck: false }), 'C:\\Users\\annvenka\\Downloads\\factsreports-1362.pdf');
+    await changeVisibility(false);
+
+    assert(await Selector('.dz-preview').visible);
+});
